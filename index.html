@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1C2B4B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Caja">
+<title>Caja Gutenberg</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F8; --card:#FFFFFF; --ink:#1C2B4B; --ink2:#5A6580; --line:#DCE1E9;
+  --yellow:#F2C230; --on-yellow:#2B2300; --green:#2E7D57; --red:#B3362B;
+  --rs:8px; --rl:16px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --paper:#10151F; --card:#1A2130; --ink:#E9EDF5; --ink2:#9AA5BA; --line:#2B3547;
+         --green:#5BC08E; --red:#E5776B; color-scheme:dark; }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+[hidden]{display:none!important}
+.muted{color:var(--ink2)}
+
+/* ---------- marca: un tipo móvil ---------- */
+.mark{width:56px;height:56px;border-radius:10px;background:var(--ink);color:var(--yellow);display:grid;place-items:center;font-weight:800;font-size:34px;font-stretch:80%;line-height:1;box-shadow:inset 0 -6px 0 rgba(0,0,0,.28)}
+@media (prefers-color-scheme:dark){.mark{background:#2A3854}}
+
+/* ---------- login ---------- */
+#login{min-height:100dvh;display:grid;place-items:center;padding:24px}
+.login-box{width:100%;max-width:360px}
+.brand{font-size:40px;font-weight:800;font-stretch:72%;letter-spacing:-.01em;line-height:.95;margin:20px 0 8px}
+.field{display:block;margin-top:16px}
+.field span{display:block;font-size:14px;color:var(--ink2);margin-bottom:6px}
+input[type=text],input[type=email],input[type=password],input[type=number]{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--rs);background:var(--card);font-size:16px}
+input:focus{border-color:var(--ink);outline:none}
+.err{color:var(--red);font-size:14px;min-height:20px;margin:10px 0 0}
+
+/* ---------- botones ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:var(--rs);border:0;background:var(--ink);color:var(--paper);font-weight:700;font-size:16px;white-space:nowrap}
+.btn.full{width:100%}
+.btn.yellow{background:var(--yellow);color:var(--on-yellow)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.small{padding:9px 14px;font-size:14px}
+.btn:disabled{opacity:.5}
+.link{background:none;border:0;padding:0;color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- cabecera ---------- */
+.top{position:sticky;top:0;z-index:10;background:var(--paper);padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 10px;border-bottom:1px solid var(--line)}
+.top-in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.top .mark{width:34px;height:34px;font-size:21px;border-radius:6px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.28)}
+.top-title{font-weight:800;font-stretch:72%;font-size:24px;line-height:1}
+.sync{margin-left:auto;font-size:13px;padding:5px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink2);display:flex;gap:6px;align-items:center}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.sync.pend i{background:var(--yellow)}
+.sync.err i{background:var(--red)}
+
+.view{padding:16px 16px calc(160px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
+.view h2.sec{font-size:26px;font-weight:800;font-stretch:75%;line-height:1;margin:6px 0 14px}
+
+/* ---------- vender ---------- */
+.hoy{font-size:17px;margin:4px 0 16px;color:var(--ink2)}
+.hoy b{color:var(--ink);font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.prod{position:relative;text-align:left;min-height:96px;padding:14px;border-radius:var(--rs);border:1.5px solid var(--line);background:var(--card);display:flex;flex-direction:column;justify-content:space-between;gap:8px;transition:transform .08s}
+.prod:active{transform:scale(.97)}
+.prod-n{font-weight:700;font-stretch:88%;font-size:17px;line-height:1.15}
+.prod-p{color:var(--ink2);font-variant-numeric:tabular-nums;font-size:15px}
+.prod.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.prod-q{position:absolute;top:-9px;right:-7px;min-width:28px;height:28px;padding:0 7px;border-radius:14px;background:var(--yellow);color:var(--on-yellow);font-weight:800;display:grid;place-items:center;font-size:14px;border:2px solid var(--paper)}
+.empty{grid-column:1/-1;padding:28px 18px;border:1.5px dashed var(--line);border-radius:var(--rs);color:var(--ink2);text-align:center}
+
+/* barra del carrito */
+.bar{position:fixed;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:20;max-width:696px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;background:var(--ink);color:var(--paper);border-radius:var(--rl);box-shadow:0 8px 24px rgba(16,24,48,.25)}
+.bar-txt{font-size:13px;opacity:.8;display:block}
+.bar-total{font-weight:800;font-size:21px;font-variant-numeric:tabular-nums}
+.bar .btn{margin-left:auto}
+
+/* pestañas */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs button{background:none;border:0;padding:9px 4px 11px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--ink2);position:relative}
+nav.tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button[aria-current=page]{color:var(--ink);font-weight:700}
+nav.tabs button[aria-current=page]::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--yellow)}
+
+/* hoja de cobro */
+.scrim{position:fixed;inset:0;background:rgba(10,15,30,.45);z-index:30}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;background:var(--card);border-radius:var(--rl) var(--rl) 0 0;max-height:88dvh;overflow:auto;padding:6px 18px calc(18px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:6px auto 10px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center}
+.sheet-head h2{margin:0;font-size:24px;font-weight:800;font-stretch:75%}
+.sheet h3{font-size:14px;color:var(--ink2);font-weight:600;margin:18px 0 8px}
+.ln{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.ln-n{flex:1;font-weight:600;line-height:1.2}
+.ln-n small{display:block;font-weight:400;color:var(--ink2);font-size:13px}
+.step{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:var(--rs)}
+.step button{width:38px;height:38px;border:0;background:none;font-size:20px;font-weight:700;color:var(--ink)}
+.step span{min-width:24px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.ln-s{min-width:78px;text-align:right;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);font-size:15px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.sum{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 12px}
+.sum b{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+
+/* ---------- ticket impreso (el momento especial) ---------- */
+#ticket-layer{position:fixed;inset:0;z-index:40;background:rgba(10,15,30,.6);display:flex;flex-direction:column;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 36px) 16px 24px;overflow:auto}
+.mouth{width:min(340px,92vw);height:14px;border-radius:7px;background:#0D1424;box-shadow:inset 0 3px 4px rgba(0,0,0,.6);position:relative;z-index:2}
+.slot{width:min(310px,84vw);overflow:hidden;margin-top:-7px;padding-bottom:4px}
+.ticket{background:#FFFFFF;color:#1C2B4B;padding:26px 20px 30px;font-size:14px;font-variant-numeric:tabular-nums;animation:print 1s steps(14) both;
+  -webkit-mask:radial-gradient(7px at 50% calc(100% + 1px),#0000 97%,#000) 50% / 16px 100%;
+          mask:radial-gradient(7px at 50% calc(100% + 1px),#0000 97%,#000) 50% / 16px 100%}
+@keyframes print{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.ticket{animation:none}}
+.ticket h4{margin:0;text-align:center;font-size:22px;font-weight:800;font-stretch:72%}
+.ticket .t-date{text-align:center;color:#5A6580;margin:2px 0 14px;font-size:13px}
+.ticket .t-row{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
+.ticket hr{border:0;border-top:1.5px dashed #C5CCD8;margin:10px 0}
+.ticket .t-total{font-size:20px;font-weight:800}
+.ticket .t-ok{text-align:center;margin:14px 0 0;font-weight:700;color:#2E7D57}
+#ticket-layer .btn{margin-top:22px;min-width:180px}
+
+/* ---------- ventas ---------- */
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.toolbar .btn{margin-left:auto}
+.resumen{color:var(--ink2);margin:12px 0 4px}
+.resumen b{color:var(--ink)}
+.daysep{font-weight:800;font-stretch:78%;font-size:19px;margin:22px 0 8px}
+.daysep span{font-weight:500;font-stretch:100%;font-size:14px;color:var(--ink2);margin-left:6px}
+.tk{background:var(--card);border:1px solid var(--line);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px}
+.tk-top{display:flex;justify-content:space-between;gap:10px;font-weight:700;font-variant-numeric:tabular-nums}
+.tk-items{margin:3px 0 8px}
+.tk-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink2);align-items:center}
+.pend{color:#6B5100;background:#FBEFC4;padding:1px 8px;border-radius:999px}
+.tk-del{margin-left:auto;background:none;border:0;color:var(--red);font-size:13px;padding:4px 0;font-weight:600}
+
+/* ---------- panel ---------- */
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0 12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--rs);padding:12px 12px}
+.kpi b{display:block;font-size:21px;font-weight:800;font-stretch:85%;font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi span{font-size:13px;color:var(--ink2)}
+.kpi.main{grid-column:1/-1;background:var(--ink);color:var(--paper);border-color:var(--ink);padding:16px}
+.kpi.main b{font-size:38px;font-stretch:75%}
+.kpi.main span{color:inherit;opacity:.75}
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--rs);padding:14px;margin-bottom:12px}
+.box h3{font-size:16px;margin:0 0 10px;font-weight:700}
+.chart{position:relative;height:220px}
+.chart.short{height:200px}
+.vend{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:15px}
+.vend .v-m{font-variant-numeric:tabular-nums;font-weight:700}
+.vbar{grid-column:1/-1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.vbar i{display:block;height:100%;background:var(--yellow)}
+@media (min-width:640px){.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.two .box{margin-bottom:0}.two{margin-bottom:12px}}
+
+/* ---------- más ---------- */
+.prow{display:grid;grid-template-columns:1fr 92px 84px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.prow.off input[type=text],.prow.off input[type=number]{opacity:.5}
+.prow input[type=text],.prow input[type=number]{padding:10px 10px}
+.sw{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2)}
+.sw input{width:20px;height:20px;accent-color:var(--ink)}
+.add{display:grid;grid-template-columns:1fr 92px auto;gap:8px;margin-top:14px}
+.block{margin-top:30px}
+.block h3{font-size:18px;margin:0 0 8px}
+.row{display:flex;gap:8px}
+
+/* aviso flotante */
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 70px);transform:translate(-50%,-10px);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section id="login" hidden>
+  <div class="login-box">
+    <div class="mark" aria-hidden="true">G</div>
+    <h1 class="brand">Caja Gutenberg</h1>
+    <p class="muted" style="margin:0">Entra con la cuenta que te dieron para registrar ventas.</p>
+    <label class="field"><span>Correo</span><input id="l-email" type="email" autocomplete="username" inputmode="email"></label>
+    <label class="field"><span>Contraseña</span><input id="l-pass" type="password" autocomplete="current-password"></label>
+    <p class="err" id="l-err"></p>
+    <button class="btn full" id="l-btn">Entrar</button>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div id="main" hidden>
+  <header class="top">
+    <div class="top-in">
+      <div class="mark" aria-hidden="true">G</div>
+      <span class="top-title">Caja</span>
+      <span class="sync" id="sync" role="status"><i></i><span id="sync-t">Todo guardado</span></span>
+    </div>
+  </header>
+
+  <!-- Vender -->
+  <section class="view" id="v-vender">
+    <p class="hoy" id="hoy">&nbsp;</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- Ventas -->
+  <section class="view" id="v-ventas" hidden>
+    <h2 class="sec">Ventas</h2>
+    <div class="toolbar">
+      <div class="chips" id="r-ventas">
+        <button class="chip" data-r="hoy">Hoy</button>
+        <button class="chip" data-r="7d">7 días</button>
+        <button class="chip" data-r="mes">Este mes</button>
+      </div>
+    </div>
+    <p class="resumen" id="v-resumen"></p>
+    <div id="v-list"></div>
+    <button class="btn ghost full" id="btn-csv" style="margin-top:18px">Descargar en Excel (CSV)</button>
+  </section>
+
+  <!-- Panel -->
+  <section class="view" id="v-panel" hidden>
+    <h2 class="sec">Panel</h2>
+    <div class="chips" id="r-panel">
+      <button class="chip" data-r="hoy">Hoy</button>
+      <button class="chip" data-r="7d">7 días</button>
+      <button class="chip" data-r="mes">Este mes</button>
+      <button class="chip" data-r="todo">Todo</button>
+    </div>
+    <p class="resumen" id="p-msg"></p>
+    <div id="p-body" hidden>
+      <div class="kpis">
+        <div class="kpi main"><span>Total vendido</span><b id="k-total"></b></div>
+        <div class="kpi"><b id="k-tickets"></b><span>ventas</span></div>
+        <div class="kpi"><b id="k-prom"></b><span>por venta</span></div>
+        <div class="kpi"><b id="k-unid"></b><span>unidades</span></div>
+      </div>
+      <div class="box"><h3 id="serie-t">Ventas por día</h3><div class="chart"><canvas id="c-serie"></canvas></div></div>
+      <div class="two">
+        <div class="box"><h3>Lo que más se vende</h3><div class="chart short"><canvas id="c-top"></canvas></div></div>
+        <div class="box"><h3>Cómo pagan</h3><div class="chart short"><canvas id="c-pago"></canvas></div></div>
+      </div>
+      <div class="box"><h3>Por vendedor</h3><div class="vend" id="p-vend"></div></div>
+    </div>
+  </section>
+
+  <!-- Más -->
+  <section class="view" id="v-mas" hidden>
+    <h2 class="sec">Productos</h2>
+    <p class="muted" style="margin-top:0">Los cambios se guardan solos. Oculta un producto si ya no lo venden; su historial se mantiene.</p>
+    <div id="plist"></div>
+    <div class="add">
+      <input type="text" id="n-nombre" placeholder="Nuevo producto" aria-label="Nombre del nuevo producto">
+      <input type="number" id="n-precio" placeholder="S/" inputmode="decimal" step="0.10" min="0" aria-label="Precio">
+      <button class="btn" id="n-add">Agregar</button>
+    </div>
+
+    <div class="block">
+      <h3>Tu nombre</h3>
+      <p class="muted" style="margin-top:0">Así aparecerás en las ventas y en el panel.</p>
+      <div class="row"><input type="text" id="mi-nombre" aria-label="Tu nombre"><button class="btn" id="btn-nombre">Guardar</button></div>
+    </div>
+    <div class="block">
+      <p class="muted" id="cuenta"></p>
+      <button class="btn ghost" id="btn-salir">Cerrar sesión</button>
+    </div>
+  </section>
+
+  <!-- Barra de carrito -->
+  <div class="bar" id="bar" hidden>
+    <div><span class="bar-txt" id="bar-txt"></span><span class="bar-total" id="bar-total"></span></div>
+    <button class="btn yellow" id="bar-btn">Cobrar</button>
+  </div>
+
+  <nav class="tabs" aria-label="Secciones">
+    <div class="tabs-in">
+      <button data-tab="vender"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg>Vender</button>
+      <button data-tab="ventas"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>Ventas</button>
+      <button data-tab="panel"><svg viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/></svg>Panel</button>
+      <button data-tab="mas"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Productos</button>
+    </div>
+  </nav>
+</div>
+
+<!-- Hoja de cobro -->
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" hidden aria-label="Cobrar venta">
+  <div class="grab"></div>
+  <div class="sheet-head"><h2>Esta venta</h2><button class="link" id="vaciar">Vaciar</button></div>
+  <div id="lines"></div>
+  <h3>Cómo pagó</h3>
+  <div class="chips" id="pagos">
+    <button class="chip" data-p="efectivo">Efectivo</button>
+    <button class="chip" data-p="yape_plin">Yape / Plin</button>
+    <button class="chip" data-p="transferencia">Transferencia</button>
+    <button class="chip" data-p="tarjeta">Tarjeta</button>
+  </div>
+  <h3>Nota (opcional)</h3>
+  <input type="text" id="nota" placeholder="Ej.: pedido de la señora Rosa">
+  <div class="sum"><span>Total</span><b id="sheet-total"></b></div>
+  <button class="btn yellow full" id="registrar">Registrar venta</button>
+</section>
+
+<!-- Ticket -->
+<div id="ticket-layer" hidden>
+  <div class="mouth"></div>
+  <div class="slot"><div class="ticket" id="ticket"></div></div>
+  <button class="btn yellow" id="ticket-ok">Listo, otra venta</button>
+</div>
+
+<div id="toast"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+/* ================= utilidades ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => 'S/ ' + (Number(n) || 0).toLocaleString('es-PE', {minimumFractionDigits:2, maximumFractionDigits:2});
+const pad = n => String(n).padStart(2, '0');
+const dkey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const hora = d => d.toLocaleTimeString('es-PE', {hour:'numeric', minute:'2-digit'});
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const PAGOS = {efectivo:'Efectivo', yape_plin:'Yape / Plin', transferencia:'Transferencia', tarjeta:'Tarjeta'};
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() :
+  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c === 'x' ? r : (r&3|8)).toString(16); }));
+const store = {
+  get(k, d){ try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2400); }
+
+/* ================= configuración ================= */
+const C = window.APP_CONFIG || {};
+const configurado = C.SUPABASE_URL && !C.SUPABASE_URL.includes('TU-PROYECTO') && C.SUPABASE_ANON_KEY && !C.SUPABASE_ANON_KEY.includes('TU-ANON');
+const sb = configurado ? window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY) : null;
+
+const S = {
+  user: null,
+  productos: store.get('cg_productos', []),
+  cart: new Map(),
+  pago: 'efectivo',
+  tab: store.get('cg_tab', 'vender'),
+  rVentas: 'hoy',
+  rPanel: '7d',
+  ventas: [],
+  charts: {}
+};
+
+/* ================= sesión ================= */
+const nombre = () => (S.user?.user_metadata?.nombre || (S.user?.email || '').split('@')[0] || 'Sin nombre');
+
+function setUser(u){
+  const cambio = (u?.id || null) !== (S.user?.id || null);
+  S.user = u;
+  $('#login').hidden = !!u;
+  $('#main').hidden = !u;
+  if (u && cambio) boot();
+}
+
+$('#l-btn').onclick = async () => {
+  if (!sb) return;
+  const email = $('#l-email').value.trim(), password = $('#l-pass').value;
+  if (!email || !password){ $('#l-err').textContent = 'Escribe tu correo y tu contraseña.'; return; }
+  $('#l-btn').disabled = true; $('#l-err').textContent = '';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  $('#l-btn').disabled = false;
+  if (error) $('#l-err').textContent = navigator.onLine
+    ? 'Correo o contraseña incorrectos. Revisa e intenta otra vez.'
+    : 'Necesitas internet para entrar la primera vez.';
+};
+$('#l-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('#l-btn').click(); });
+
+$('#btn-salir').onclick = async () => {
+  if (store.get('cg_outbox', []).length && !confirm('Hay ventas que aún no se subieron. Si cierras sesión se quedan en este celular hasta que vuelvas a entrar. ¿Cerrar igual?')) return;
+  await sb.auth.signOut();
+};
+
+/* ================= navegación ================= */
+function go(tab){
+  S.tab = tab; store.set('cg_tab', tab);
+  $$('.view').forEach(v => v.hidden = v.id !== 'v-' + tab);
+  $$('nav.tabs button').forEach(b => b.dataset.tab === tab ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  renderCart();
+  if (tab === 'vender') resumenHoy();
+  if (tab === 'ventas') loadVentas();
+  if (tab === 'panel') loadPanel();
+  if (tab === 'mas') renderMas();
+  window.scrollTo(0, 0);
+}
+$$('nav.tabs button').forEach(b => b.onclick = () => go(b.dataset.tab));
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) go(g.dataset.go); });
+
+function boot(){
+  renderGrid();
+  loadProductos();
+  go(S.tab);
+  flush();
+}
+
+/* ================= productos ================= */
+async function loadProductos(){
+  const { data, error } = await sb.from('productos').select('*').order('orden').order('nombre');
+  if (error) return;
+  S.productos = data; store.set('cg_productos', data);
+  renderGrid();
+  if (S.tab === 'mas') renderMas();
+}
+
+function renderGrid(){
+  const act = S.productos.filter(p => p.activo);
+  $('#grid').innerHTML = act.length ? act.map(p => {
+    const q = S.cart.get(p.id)?.cantidad || 0;
+    return `<button class="prod${q ? ' on' : ''}" data-id="${p.id}">
+      <span class="prod-n">${esc(p.nombre)}</span><span class="prod-p">${money(p.precio)}</span>
+      ${q ? `<span class="prod-q">${q}</span>` : ''}</button>`;
+  }).join('') : `<div class="empty">Aún no hay productos para vender.<br><button class="link" data-go="mas">Agrega el primero</button></div>`;
+}
+$('#grid').addEventListener('click', e => { const b = e.target.closest('.prod'); if (b) addToCart(b.dataset.id, 1); });
+
+/* ================= carrito ================= */
+function addToCart(id, d){
+  const p = S.productos.find(x => x.id === id);
+  const it = S.cart.get(id) || { id, nombre: p?.nombre || '', precio: Number(p?.precio || 0), cantidad: 0 };
+  it.cantidad += d;
+  if (it.cantidad <= 0) S.cart.delete(id); else S.cart.set(id, it);
+  renderGrid(); renderCart();
+}
+function cartTotal(){ let t = 0, n = 0; S.cart.forEach(i => { t += i.precio * i.cantidad; n += i.cantidad; }); return { t, n }; }
+
+function renderCart(){
+  const { t, n } = cartTotal();
+  $('#bar').hidden = !n || S.tab !== 'vender';
+  $('#bar-txt').textContent = `${n} ${n === 1 ? 'producto' : 'productos'}`;
+  $('#bar-total').textContent = money(t);
+  $('#sheet-total').textContent = money(t);
+  $('#lines').innerHTML = [...S.cart.values()].map(i => `
+    <div class="ln" data-id="${i.id}">
+      <div class="ln-n">${esc(i.nombre)}<small>${money(i.precio)} c/u</small></div>
+      <div class="step"><button data-d="-1" aria-label="Quitar uno">−</button><span>${i.cantidad}</span><button data-d="1" aria-label="Agregar uno">+</button></div>
+      <div class="ln-s">${money(i.precio * i.cantidad)}</div>
+    </div>`).join('');
+  $$('#pagos .chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.p === S.pago));
+  if (!n) closeSheet();
+}
+$('#lines').addEventListener('click', e => { const b = e.target.closest('[data-d]'); if (b) addToCart(b.closest('.ln').dataset.id, Number(b.dataset.d)); });
+$('#pagos').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c){ S.pago = c.dataset.p; renderCart(); } });
+$('#vaciar').onclick = () => { S.cart.clear(); renderGrid(); renderCart(); };
+
+function openSheet(){ $('#scrim').hidden = false; $('#sheet').hidden = false; }
+function closeSheet(){ $('#scrim').hidden = true; $('#sheet').hidden = true; }
+$('#bar-btn').onclick = openSheet;
+$('#scrim').onclick = closeSheet;
+
+/* ================= registrar venta ================= */
+$('#registrar').onclick = async () => {
+  if (!S.cart.size) return;
+  const ticket = uuid(), ahora = new Date().toISOString(), nota = $('#nota').value.trim() || null;
+  const rows = [...S.cart.values()].map((i, k) => ({
+    client_id: `${ticket}-${k}`, ticket_id: ticket, producto_id: i.id, producto: i.nombre,
+    precio: i.precio, cantidad: i.cantidad, metodo_pago: S.pago, nota,
+    vendedor_id: S.user.id, vendedor: nombre(), created_at: ahora
+  }));
+  const out = store.get('cg_outbox', []); out.push(...rows); store.set('cg_outbox', out);
+  showTicket(rows);
+  S.cart.clear(); S.pago = 'efectivo'; $('#nota').value = '';
+  renderGrid(); renderCart(); closeSheet();
+  await flush();
+  resumenHoy();
+};
+
+function showTicket(rows){
+  const d = new Date(rows[0].created_at), total = rows.reduce((a, r) => a + r.precio * r.cantidad, 0);
+  $('#ticket').innerHTML = `
+    <h4>Caja Gutenberg</h4>
+    <p class="t-date">${d.toLocaleDateString('es-PE', {day:'numeric', month:'long', year:'numeric'})}, ${hora(d)}</p>
+    ${rows.map(r => `<div class="t-row"><span>${r.cantidad} × ${esc(r.producto)}</span><span>${money(r.precio * r.cantidad)}</span></div>`).join('')}
+    <hr>
+    <div class="t-row t-total"><span>Total</span><span>${money(total)}</span></div>
+    <div class="t-row"><span>Pago</span><span>${PAGOS[rows[0].metodo_pago]}</span></div>
+    <div class="t-row"><span>Atendió</span><span>${esc(rows[0].vendedor)}</span></div>
+    ${rows[0].nota ? `<div class="t-row"><span>Nota</span><span>${esc(rows[0].nota)}</span></div>` : ''}
+    <p class="t-ok">Venta registrada</p>`;
+  const t = $('#ticket'); t.style.animation = 'none'; t.offsetHeight; t.style.animation = '';
+  $('#ticket-layer').hidden = false;
+  $('#ticket-ok').focus();
+}
+$('#ticket-ok').onclick = () => { $('#ticket-layer').hidden = true; };
+
+/* ================= sincronización (funciona sin internet) ================= */
+let flushing = false;
+function syncPill(err){
+  const n = store.get('cg_outbox', []).length, el = $('#sync');
+  el.classList.toggle('pend', n > 0 && !err);
+  el.classList.toggle('err', !!err && n > 0);
+  $('#sync-t').textContent = !n ? 'Todo guardado'
+    : !navigator.onLine ? `${n === 1 ? '1 producto' : n + ' productos'} sin internet`
+    : err ? 'No se pudo subir' : `Subiendo ${n}…`;
+}
+async function flush(){
+  const out = store.get('cg_outbox', []);
+  syncPill();
+  if (!out.length || flushing || !navigator.onLine || !S.user) return;
+  flushing = true;
+  const { error } = await sb.from('ventas').upsert(out, { onConflict: 'client_id', ignoreDuplicates: true });
+  flushing = false;
+  if (error){ console.warn(error); syncPill(true); return; }
+  const subidas = new Set(out.map(r => r.client_id));
+  store.set('cg_outbox', store.get('cg_outbox', []).filter(r => !subidas.has(r.client_id)));
+  syncPill();
+  if (S.tab === 'ventas') loadVentas();
+  if (S.tab === 'panel') loadPanel();
+}
+window.addEventListener('online', flush);
+window.addEventListener('offline', () => syncPill());
+setInterval(flush, 30000);
+
+/* ================= lectura de ventas ================= */
+function inicio(k){
+  if (k === 'todo') return null;
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  if (k === '7d') d.setDate(d.getDate() - 6);
+  if (k === 'mes') d.setDate(1);
+  return d.toISOString();
+}
+const conSubtotal = r => ({ ...r, subtotal: r.precio * r.cantidad, pendiente: true });
+const pendientes = desde => store.get('cg_outbox', []).filter(r => !desde || new Date(r.created_at) >= new Date(desde)).map(conSubtotal);
+
+async function fetchVentas(desde){
+  let all = [], from = 0; const page = 1000;
+  while (true){
+    let q = sb.from('ventas').select('*').order('created_at', { ascending: false }).range(from, from + page - 1);
+    if (desde) q = q.gte('created_at', desde);
+    const { data, error } = await q;
+    if (error) throw error;
+    all = all.concat(data);
+    if (data.length < page || all.length >= 20000) break;
+    from += page;
+  }
+  return all;
+}
+
+async function resumenHoy(){
+  const desde = inicio('hoy');
+  let rows = [];
+  try { rows = await fetchVentas(desde); } catch {}
+  rows = rows.concat(pendientes(desde));
+  const t = rows.reduce((a, r) => a + Number(r.subtotal), 0);
+  const n = new Set(rows.map(r => r.ticket_id)).size;
+  $('#hoy').innerHTML = n
+    ? `Hoy llevas <b>${money(t)}</b> en ${n} ${n === 1 ? 'venta' : 'ventas'}.`
+    : 'Todavía no hay ventas hoy. Toca un producto para empezar.';
+}
+
+/* ================= vista Ventas ================= */
+function agrupar(rows){
+  const m = new Map();
+  rows.forEach(r => {
+    let g = m.get(r.ticket_id);
+    if (!g){ g = { ticket: r.ticket_id, fecha: new Date(r.created_at), vendedor: r.vendedor, vendedor_id: r.vendedor_id,
+                   pago: r.metodo_pago, nota: r.nota, items: [], total: 0, pendiente: !!r.pendiente }; m.set(r.ticket_id, g); }
+    g.items.push(r); g.total += Number(r.subtotal);
+  });
+  return [...m.values()].sort((a, b) => b.fecha - a.fecha);
+}
+
+async function loadVentas(){
+  $$('#r-ventas .chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.r === S.rVentas));
+  $('#v-list').innerHTML = '<p class="muted">Cargando ventas…</p>';
+  const desde = inicio(S.rVentas);
+  let rows;
+  try { rows = await fetchVentas(desde); }
+  catch { rows = []; $('#v-list').innerHTML = ''; toast('Sin conexión: solo se muestran las ventas guardadas en este celular'); }
+  S.ventas = pendientes(desde).concat(rows);
+  renderVentas();
+}
+
+function renderVentas(){
+  const tickets = agrupar(S.ventas);
+  const total = tickets.reduce((a, t) => a + t.total, 0);
+  $('#v-resumen').innerHTML = tickets.length
+    ? `<b>${tickets.length}</b> ${tickets.length === 1 ? 'venta' : 'ventas'} por <b>${money(total)}</b>`
+    : 'No hay ventas en este periodo.';
+  let html = '', dia = '';
+  tickets.forEach(t => {
+    const k = dkey(t.fecha);
+    if (S.rVentas !== 'hoy' && k !== dia){
+      dia = k;
+      const totDia = tickets.filter(x => dkey(x.fecha) === k).reduce((a, x) => a + x.total, 0);
+      const txt = t.fecha.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
+      html += `<div class="daysep">${txt.charAt(0).toUpperCase() + txt.slice(1)}<span>${money(totDia)}</span></div>`;
+    }
+    const mia = t.vendedor_id === S.user.id;
+    html += `<article class="tk">
+      <div class="tk-top"><span>${hora(t.fecha)}</span><span>${money(t.total)}</span></div>
+      <p class="tk-items">${t.items.map(i => `${i.cantidad} × ${esc(i.producto)}`).join(', ')}</p>
+      <div class="tk-meta"><span>${PAGOS[t.pago] || esc(t.pago)}</span><span>${esc(t.vendedor)}</span>
+        ${t.nota ? `<span>${esc(t.nota)}</span>` : ''}
+        ${t.pendiente ? '<span class="pend">Por subir</span>' : ''}
+        ${mia && !t.pendiente ? `<button class="tk-del" data-t="${t.ticket}">Borrar</button>` : ''}
+      </div></article>`;
+  });
+  $('#v-list').innerHTML = html;
+}
+
+$('#r-ventas').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c){ S.rVentas = c.dataset.r; loadVentas(); } });
+$('#v-list').addEventListener('click', async e => {
+  const b = e.target.closest('.tk-del'); if (!b) return;
+  if (!confirm('¿Borrar esta venta? No se puede deshacer.')) return;
+  const { error } = await sb.from('ventas').delete().eq('ticket_id', b.dataset.t);
+  if (error) return toast('No se pudo borrar. Revisa tu conexión.');
+  toast('Venta borrada'); loadVentas(); resumenHoy();
+});
+
+$('#btn-csv').onclick = () => {
+  if (!S.ventas.length) return toast('No hay ventas para descargar en este periodo');
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const lines = [['Fecha','Hora','Venta','Producto','Precio','Cantidad','Subtotal','Medio de pago','Vendedor','Nota'].map(q).join(',')];
+  [...S.ventas].sort((a, b) => new Date(a.created_at) - new Date(b.created_at)).forEach(r => {
+    const d = new Date(r.created_at);
+    lines.push([dkey(d), `${pad(d.getHours())}:${pad(d.getMinutes())}`, r.ticket_id.slice(0, 8), r.producto,
+      Number(r.precio).toFixed(2), r.cantidad, Number(r.subtotal).toFixed(2), PAGOS[r.metodo_pago] || r.metodo_pago,
+      r.vendedor, r.nota].map(q).join(','));
+  });
+  const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ventas-${S.rVentas}-${dkey(new Date())}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+};
+
+/* ================= vista Panel ================= */
+function chart(key, el, cfg){ S.charts[key]?.destroy(); S.charts[key] = new Chart(el, cfg); }
+
+async function loadPanel(){
+  $$('#r-panel .chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.r === S.rPanel));
+  const msg = $('#p-msg'), body = $('#p-body');
+  msg.hidden = false; msg.textContent = 'Cargando…';
+  const desde = inicio(S.rPanel);
+  let rows;
+  try { rows = await fetchVentas(desde); }
+  catch { body.hidden = true; msg.textContent = 'No se pudo cargar el panel. Revisa tu conexión y vuelve a intentar.'; return; }
+  rows = rows.concat(pendientes(desde));
+  if (!rows.length){ body.hidden = true; msg.textContent = 'No hay ventas en este periodo. Cuando registren ventas, aquí aparecerán los números.'; return; }
+  msg.hidden = true; body.hidden = false;
+
+  const total = rows.reduce((a, r) => a + Number(r.subtotal), 0);
+  const tickets = new Set(rows.map(r => r.ticket_id)).size;
+  $('#k-total').textContent = money(total);
+  $('#k-tickets').textContent = tickets;
+  $('#k-prom').textContent = money(total / tickets);
+  $('#k-unid').textContent = rows.reduce((a, r) => a + r.cantidad, 0);
+
+  const ink = css('--ink'), ink2 = css('--ink2'), line = css('--line'), yel = css('--yellow'), grn = css('--green');
+  Chart.defaults.color = ink2; Chart.defaults.borderColor = line;
+  Chart.defaults.font.family = 'Archivo, system-ui, sans-serif'; Chart.defaults.font.size = 12;
+  const tip = { callbacks: { label: c => money(c.parsed.y ?? c.parsed.x ?? c.parsed) } };
+
+  // serie en el tiempo
+  const labels = [], vals = [];
+  if (S.rPanel === 'hoy'){
+    const h = Array(24).fill(0);
+    rows.forEach(r => h[new Date(r.created_at).getHours()] += Number(r.subtotal));
+    const usadas = h.map((v, i) => v ? i : -1).filter(i => i >= 0);
+    for (let i = Math.min(8, ...usadas); i <= Math.max(20, ...usadas); i++){ labels.push(i + 'h'); vals.push(h[i]); }
+    $('#serie-t').textContent = 'Ventas por hora';
+  } else {
+    const m = new Map();
+    rows.forEach(r => { const k = dkey(new Date(r.created_at)); m.set(k, (m.get(k) || 0) + Number(r.subtotal)); });
+    const ini = desde ? new Date(desde) : new Date(Math.min(...rows.map(r => +new Date(r.created_at))));
+    ini.setHours(0, 0, 0, 0);
+    const fin = new Date(); fin.setHours(0, 0, 0, 0);
+    for (const d = new Date(ini); d <= fin; d.setDate(d.getDate() + 1)){
+      labels.push(d.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }));
+      vals.push(m.get(dkey(d)) || 0);
+    }
+    $('#serie-t').textContent = 'Ventas por día';
+  }
+  chart('serie', $('#c-serie'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: vals, backgroundColor: ink, borderRadius: 3, maxBarThickness: 30 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: tip },
+      scales: { y: { beginAtZero: true, ticks: { callback: v => 'S/ ' + v } }, x: { grid: { display: false } } } }
+  });
+
+  // productos top
+  const pm = new Map();
+  rows.forEach(r => pm.set(r.producto, (pm.get(r.producto) || 0) + Number(r.subtotal)));
+  const top = [...pm.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+  chart('top', $('#c-top'), {
+    type: 'bar',
+    data: { labels: top.map(x => x[0].length > 18 ? x[0].slice(0, 17) + '…' : x[0]),
+            datasets: [{ data: top.map(x => x[1]), backgroundColor: yel, borderRadius: 3, maxBarThickness: 22 }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => money(c.parsed.x) } } },
+      scales: { x: { beginAtZero: true, ticks: { callback: v => 'S/ ' + v } }, y: { grid: { display: false } } } }
+  });
+
+  // medios de pago
+  const mp = new Map();
+  rows.forEach(r => mp.set(r.metodo_pago, (mp.get(r.metodo_pago) || 0) + Number(r.subtotal)));
+  const orden = Object.keys(PAGOS).filter(k => mp.has(k));
+  chart('pago', $('#c-pago'), {
+    type: 'doughnut',
+    data: { labels: orden.map(k => PAGOS[k]), datasets: [{ data: orden.map(k => mp.get(k)), backgroundColor: [ink, yel, grn, ink2], borderColor: css('--card'), borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } }, tooltip: { callbacks: { label: c => `${c.label}: ${money(c.parsed)}` } } } }
+  });
+
+  // vendedores
+  const vm = new Map();
+  rows.forEach(r => vm.set(r.vendedor, (vm.get(r.vendedor) || 0) + Number(r.subtotal)));
+  const vs = [...vm.entries()].sort((a, b) => b[1] - a[1]), max = vs[0][1] || 1;
+  $('#p-vend').innerHTML = vs.map(([n, v]) => `<span>${esc(n)}</span><span class="v-m">${money(v)}</span><div class="vbar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></div>`).join('');
+}
+$('#r-panel').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c){ S.rPanel = c.dataset.r; loadPanel(); } });
+
+/* ================= vista Productos ================= */
+function renderMas(){
+  $('#mi-nombre').value = nombre();
+  $('#cuenta').textContent = `Conectada como ${S.user?.email || ''}`;
+  $('#plist').innerHTML = S.productos.length ? S.productos.map(p => `
+    <div class="prow${p.activo ? '' : ' off'}" data-id="${p.id}">
+      <input type="text" value="${esc(p.nombre)}" data-f="nombre" aria-label="Nombre">
+      <input type="number" inputmode="decimal" step="0.10" min="0" value="${Number(p.precio).toFixed(2)}" data-f="precio" aria-label="Precio">
+      <label class="sw"><input type="checkbox" data-f="activo" ${p.activo ? 'checked' : ''}>${p.activo ? 'Visible' : 'Oculto'}</label>
+    </div>`).join('') : '<p class="muted">Todavía no hay productos. Agrega el primero aquí abajo.</p>';
+}
+
+$('#plist').addEventListener('change', async e => {
+  const row = e.target.closest('.prow'), f = e.target.dataset.f;
+  if (!row || !f) return;
+  let v = f === 'activo' ? e.target.checked : f === 'precio' ? Number(e.target.value) : e.target.value.trim();
+  if (f === 'nombre' && !v){ toast('El nombre no puede quedar vacío'); return renderMas(); }
+  if (f === 'precio' && !(v >= 0)){ toast('Escribe un precio válido'); return renderMas(); }
+  const { error } = await sb.from('productos').update({ [f]: v }).eq('id', row.dataset.id);
+  if (error) return toast('No se guardó el cambio. Revisa tu conexión.');
+  toast('Guardado');
+  loadProductos();
+});
+
+$('#n-add').onclick = async () => {
+  const n = $('#n-nombre').value.trim(), p = Number($('#n-precio').value);
+  if (!n) return toast('Escribe el nombre del producto');
+  if (!$('#n-precio').value || !(p >= 0)) return toast('Escribe el precio');
+  $('#n-add').disabled = true;
+  const { error } = await sb.from('productos').insert({ nombre: n, precio: p, orden: S.productos.length + 1 });
+  $('#n-add').disabled = false;
+  if (error) return toast('No se pudo agregar. Revisa tu conexión.');
+  $('#n-nombre').value = ''; $('#n-precio').value = '';
+  toast(`${n} agregado`);
+  loadProductos();
+};
+
+$('#btn-nombre').onclick = async () => {
+  const n = $('#mi-nombre').value.trim();
+  if (!n) return toast('Escribe tu nombre');
+  const { data, error } = await sb.auth.updateUser({ data: { nombre: n } });
+  if (error) return toast('No se pudo guardar tu nombre');
+  S.user = data.user; toast('Nombre guardado');
+};
+
+/* ================= arranque ================= */
+(async () => {
+  if (!sb){
+    $('#login').hidden = false;
+    $('#l-err').textContent = 'Falta configurar la conexión: completa config.js con los datos de Supabase.';
+    $('#l-btn').disabled = true;
+    return;
+  }
+  const { data: { session } } = await sb.auth.getSession();
+  setUser(session?.user || null);
+  sb.auth.onAuthStateChange((_e, session) => setUser(session?.user || null));
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
