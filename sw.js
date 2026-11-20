@@ -1,8 +1,8 @@
 // Guarda la app en el celular para que abra aunque no haya internet.
 // Las ventas sin internet se guardan en el teléfono y se suben solas al volver la señal.
-const CACHE = 'caja-gutenberg-v2';
+const CACHE = 'johannes-gutenberg-v3';
 const SHELL = [
-  './', './index.html', './config.js', './manifest.json', './icon.svg',
+  './', './index.html', './config.js', './manifest.json', './icon.svg', './logo-referencia.png',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'

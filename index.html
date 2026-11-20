@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1C2B4B">
+<meta name="theme-color" content="#0756F9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Caja">
-<title>Caja Gutenberg</title>
+<meta name="apple-mobile-web-app-title" content="Gutenberg">
+<title>Johannes Gutenberg · Caja y ventas</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
@@ -255,6 +255,42 @@ nav.tabs button[aria-current=page]::before{content:"";position:absolute;top:0;le
 
 #toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 70px);transform:translate(-50%,-10px);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Identidad visual Johannes Gutenberg — capa de diseño no destructiva */
+:root{--paper:#F7F9FF;--card:#FFFFFF;--ink:#10204E;--ink2:#66718B;--line:#E2E8F5;--soft:#EEF3FF;--yellow:#FFE34D;--yellow-soft:#FFF7CC;--on-yellow:#10204E;--green:#2D9A59;--red:#F24A43;--rs:15px;--rl:23px;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--paper:#F7F9FF;--card:#FFFFFF;--ink:#10204E;--ink2:#66718B;--line:#E2E8F5;--soft:#EEF3FF;--yellow:#FFE34D;--yellow-soft:#FFF7CC;--green:#2D9A59;--red:#F24A43;color-scheme:light}}
+body{font-family:'Archivo',system-ui,sans-serif;background:var(--paper)}
+#login{background:radial-gradient(circle at 88% 4%,#ffe34d 0 9%,transparent 9.3%),radial-gradient(circle at -10% 100%,#f24a43 0 16%,transparent 16.3%),linear-gradient(145deg,#f6f9ff,#fff)}
+.login-box{max-width:390px;background:#fff;border:1px solid #e8edf8;border-radius:28px;padding:28px 24px 32px;box-shadow:0 20px 70px #10204e12;text-align:center}
+.brand-symbol{display:block;width:145px;height:145px;object-fit:contain;margin:0 auto;border-radius:50%}
+.brand-symbol.mini{width:38px;height:38px;flex:none;margin:0}
+.brand{color:#0756F9;font-size:34px;line-height:1.06;letter-spacing:-1.4px;margin:8px 0 10px}
+.login-box .field{text-align:left}
+.top{background:#fff;box-shadow:0 2px 14px #10204e08}
+.top-title{color:#0756F9;font-size:15px;line-height:1.03;font-stretch:normal;letter-spacing:-.4px}
+.avatar{border:0;background:#FFE34D;color:#10204E}
+.sec{font-size:30px;letter-spacing:-.8px}
+.btn{background:#0756F9;color:white;border-radius:14px;box-shadow:0 4px 10px #0756f91a}
+.btn.yellow{background:#FFE34D;color:#10204E}
+.btn.ghost{box-shadow:none;background:#fff}
+.seg{background:#EDF2FC;border-radius:17px}
+.seg button[aria-pressed=true]{background:#0756F9;color:#fff;box-shadow:0 3px 10px #0756f933}
+.chip[aria-pressed=true]{background:#0756F9;border-color:#0756F9;color:white}
+.prod,.box,.kpi,.tk,.evitem{border-radius:17px;box-shadow:0 3px 12px #10204e09}
+.prod{min-height:110px;border:1px solid #e5eaf4}
+.prod.on{border-color:#0756F9;box-shadow:inset 0 0 0 1px #0756F9}
+.prod-q{background:#FFE34D}
+.bar{background:#10204E;border-radius:20px}
+nav.tabs{box-shadow:0 -3px 20px #10204e0d}
+nav.tabs button[aria-current=page]{color:#0756F9}
+nav.tabs button[aria-current=page]::before{background:#0756F9}
+.kpi.main{background:linear-gradient(115deg,#0756F9,#0342C6);border:0}
+.rbar i{background:#0756F9}
+.rbar.y i{background:#FFE34D}
+.sync i{background:#36B55D}
+input:focus,select:focus,textarea:focus{border-color:#0756F9}
+@media(min-width:800px){.view{max-width:950px}.top-in,.tabs-in{max-width:950px}.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
+
 </style>
 </head>
 <body>
@@ -262,9 +298,9 @@ nav.tabs button[aria-current=page]::before{content:"";position:absolute;top:0;le
 <!-- ================= LOGIN ================= -->
 <section id="login" hidden>
   <div class="login-box">
-    <div class="mark" aria-hidden="true">G</div>
-    <h1 class="brand">Caja Gutenberg</h1>
-    <p class="muted" style="margin:0" id="l-sub">Entra con tu cuenta para registrar ventas.</p>
+    <img class="brand-symbol" src="logo-referencia.png" alt="Johannes Gutenberg">
+    <h1 class="brand">Johannes Gutenberg</h1>
+    <p class="muted" style="margin:0" id="l-sub">Ingresa para gestionar tus ventas.</p>
     <label class="field" id="l-nombre-f" hidden><span>Tu nombre</span><input id="l-nombre" type="text" autocomplete="name" placeholder="Así aparecerás en las ventas"></label>
     <label class="field"><span>Correo</span><input id="l-email" type="email" autocomplete="username" inputmode="email"></label>
     <label class="field"><span>Contraseña</span><input id="l-pass" type="password" autocomplete="current-password"></label>
@@ -278,8 +314,8 @@ nav.tabs button[aria-current=page]::before{content:"";position:absolute;top:0;le
 <div id="main" hidden>
   <header class="top">
     <div class="top-in">
-      <div class="mark" aria-hidden="true">G</div>
-      <span class="top-title">Caja</span>
+      <img class="brand-symbol mini" src="icon.svg" alt="">
+      <span class="top-title">Johannes<br>Gutenberg</span>
       <span class="sync" id="sync" role="status" hidden><i></i><span id="sync-t"></span></span>
       <button class="avatar" id="btn-acc" aria-label="Mi cuenta">?</button>
     </div>
@@ -510,7 +546,7 @@ function setModoLogin(reg){
   modoRegistro = reg;
   $('#l-nombre-f').hidden = !reg;
   $('#l-btn').textContent = reg ? 'Crear cuenta' : 'Entrar';
-  $('#l-sub').textContent = reg ? 'Crea tu cuenta para empezar a registrar ventas.' : 'Entra con tu cuenta para registrar ventas.';
+  $('#l-sub').textContent = reg ? 'Crea tu cuenta para empezar a registrar ventas.' : 'Ingresa para gestionar tus ventas.';
   $('#l-alt-t').textContent = reg ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?';
   $('#l-alt').textContent = reg ? 'Entrar' : 'Crear cuenta';
   $('#l-pass').autocomplete = reg ? 'new-password' : 'current-password';

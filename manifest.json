@@ -1,14 +1,19 @@
 {
-  "name": "Caja Gutenberg",
-  "short_name": "Caja",
+  "name": "Johannes Gutenberg · Caja y ventas",
+  "short_name": "Gutenberg",
   "description": "Registro y control de ventas",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F3F5F8",
-  "theme_color": "#1C2B4B",
+  "background_color": "#F7F9FF",
+  "theme_color": "#0756F9",
   "lang": "es",
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }
