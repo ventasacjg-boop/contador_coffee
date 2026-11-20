@@ -6,9 +6,11 @@ Hecha con HTML + JavaScript (sin compilar nada), Supabase como base de datos y l
 
 ## Qué hace
 
-- **Vender:** tocas los productos, ajustas cantidades, eliges cómo pagó (efectivo, Yape/Plin, transferencia, tarjeta) y registras. Sale un ticket en pantalla como confirmación.
-- **Ventas:** historial de hoy, 7 días o el mes, agrupado por día. Cada persona puede borrar solo las ventas que registró. Botón para descargar a Excel (CSV).
-- **Panel:** total vendido, número de ventas, promedio por venta, unidades, gráfico por día u hora, productos que más se venden, medios de pago y ranking por vendedor.
+- **Vender:** eliges si es **venta diaria** o de un **evento**. Los eventos los crea cualquiera y aparecen al toque en todos los celulares. Tocas los productos, ajustas con − y +, y al cobrar pones el nombre del cliente (opcional), si es mujer u hombre, cómo pagó y comentarios. Sale un ticket en pantalla como confirmación.
+- **Ventas:** historial por día con filtros (hoy, 7 días, mes, todo), por tipo o por evento, y "solo mías". Cada persona puede borrar solo las ventas que registró.
+- **Descargar Excel:** eliges si quieres todas las ventas, las de un día, las de un evento o solo las tuyas. El archivo trae una hoja por venta y otra con el detalle por producto.
+- **Panel:** total (separando diarias y eventos), ventas, promedio, unidades, gráfico por día o por hora, ranking de eventos, productos más vendidos, medios de pago, mujeres vs. hombres, horas con más ventas y ranking por vendedor.
+- **Mi cuenta:** el círculo con tu inicial arriba a la derecha muestra tus ventas de hoy, te deja cambiar tu nombre y cerrar sesión.
 - **Productos:** agregar, cambiar precio o nombre, ocultar los que ya no se venden.
 - **Sin internet:** si se cae la señal, la venta se guarda en el celular y se sube sola cuando vuelve la conexión (arriba a la derecha se ve el estado).
 
@@ -26,12 +28,16 @@ caja-gutenberg/
     └── schema.sql      tablas y permisos de la base de datos
 ```
 
+## Actualizar desde la versión anterior
+
+Si ya tenías la app funcionando: corre otra vez todo `supabase/schema.sql` en el SQL Editor (no borra nada, solo agrega eventos y los campos nuevos) y sube los archivos nuevos a GitHub.
+
 ## Paso 1: Supabase
 
 1. Entra a [supabase.com](https://supabase.com), crea un proyecto nuevo (elige la región más cercana, por ejemplo São Paulo) y guarda la contraseña de la base de datos.
 2. Ve a **SQL Editor > New query**, pega todo el contenido de `supabase/schema.sql` y dale **Run**.
-3. Ve a **Authentication > Sign In / Providers > Email** y desactiva **Allow new users to sign up**. Así nadie de afuera puede crearse una cuenta.
-4. Ve a **Authentication > Users > Add user > Create new user** y crea una cuenta por cada persona que va a vender (correo + contraseña, marca **Auto Confirm User**).
+3. Ve a **Authentication > Sign In / Providers > Email**: deja activado **Allow new users to sign up** (cada persona crea su cuenta desde la app) y desactiva **Confirm email** para que puedan entrar al toque. Cuando ya estén todos registrados, puedes apagar el registro.
+4. (Opcional) También puedes crear cuentas tú misma en **Authentication > Users > Add user > Create new user**, marcando **Auto Confirm User**.
 5. Ve a **Project Settings > API** y copia el **Project URL** y la **anon public key**.
 6. Pégalos en `config.js`.
 
@@ -70,5 +76,4 @@ Cada vez que subas un cambio a GitHub, Vercel publica la nueva versión solo.
 
 - La **anon key** de `config.js` es pública por diseño; lo que protege los datos son las políticas del `schema.sql` (solo usuarios con cuenta leen y escriben, y cada uno borra solo sus ventas).
 - Si alguien cierra sesión con ventas pendientes por subir, se quedan guardadas en ese celular y se suben cuando vuelva a entrar.
-- Si el CSV se abre todo en una sola columna en Excel: **Datos > Desde texto/CSV** y elige coma como separador.
 - Para cambiar quién puede editar productos o borrar ventas, se ajustan las políticas en `schema.sql`.
